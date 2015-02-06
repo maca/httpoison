@@ -55,13 +55,13 @@ defmodule HTTPoison.Base do
         end
       end
 
-      defp prepare_request(url, headers, body, :undefined) do
+      defp prepare_request(_method, url, headers, body, :undefined) do
         {process_url(to_string(url)),
          process_request_headers(headers),
          process_request_body(body), :undefined}
       end
 
-      defp prepare_request(url, headers, body, state) do
+      defp prepare_request(_method, url, headers, body, state) do
         {request_url, state}     = process_url(to_string(url), state)
         {request_headers, state} = process_request_headers(headers, state)
         {request_body, state}    = process_request_body(body, state)
@@ -97,7 +97,7 @@ defmodule HTTPoison.Base do
           hn_options = [:async, {:stream_to, spawn(__MODULE__, :transformer, [stream_to])}] ++ hn_options
         end
 
-        {request_url, request_headers, request_body, state} = prepare_request(url, headers, body, state)
+        {request_url, request_headers, request_body, state} = prepare_request(method, url, headers, body, state)
 
         case :hackney.request(method, request_url, request_headers,
                               request_body, hn_options) do
